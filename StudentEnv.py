@@ -39,6 +39,8 @@ rules = {
 
 
 class StudentEnv(gym.Env):
+    current_emotion: int
+
     def __init__(self):
         # Define action and observation space
         # Action space: Categories of questions to ask
@@ -64,13 +66,13 @@ class StudentEnv(gym.Env):
         correct, next_emotion = self.apply_rules(action)
 
         # Update the current emotion based on the rules or any other logic
-        self.current_emotion = next_emotion
+        self.current_emotion = emotions.index(next_emotion)
 
         # Return the new state, reward, and other info
         return self.current_emotion, correct, {}, {}
 
     def apply_rules(self, category: str) -> Tuple[bool, str]:
-        emotion = self.current_emotion
+        emotion = emotions[self.current_emotion]
 
         rule: Dict[Tuple[str, str], dict] = rules.get((emotion, category), None)
         if rule is not None:
