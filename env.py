@@ -39,7 +39,7 @@ rules = {
 
 
 class StudentEnv(gym.Env):
-    metadata = {"render_modes": ["human", None], "render_fps": 1}
+    metadata = {"render_modes": ["human"], "render_fps": 1}
 
     def __init__(self):
         # Define action and observation space
@@ -73,9 +73,9 @@ class StudentEnv(gym.Env):
         self.current_emotion = emotions.index(next_emotion)
 
         # Return the new state, reward, and other info
-        return self._get_obs(), int(correct), True, True, {}
+        return self._get_obs(), correct, True, True, {}
 
-    def apply_rules(self, category: str) -> Tuple[bool, str]:
+    def apply_rules(self, category: str) -> Tuple[int, str]:
         emotion = emotions[self.current_emotion]
 
         rule: Dict[Tuple[str, str], dict] = rules.get((emotion, category), None)
@@ -84,7 +84,7 @@ class StudentEnv(gym.Env):
             next_emotion_probs: Dict[str, float] = rule["next_emotion"]
 
             # Determine correctness based on the chance
-            correct = random.random() < correct_chance
+            correct = 10 if random.random() < correct_chance else -5
 
             # Determine the next emotion based on probabilities
             next_emotion = random.choices(
@@ -95,7 +95,7 @@ class StudentEnv(gym.Env):
             return correct, next_emotion
         else:
             # Default case if there's no specific rule defined
-            return random.choice([True, False]), random.choice(emotions)
+            return random.choice([10, -5]), random.choice(emotions)
 
     def render(self):
         pass

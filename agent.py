@@ -1,4 +1,5 @@
 import numpy as np
+from env import emotions, categories
 
 
 class QLearning:
@@ -39,7 +40,7 @@ class QLearning:
             self.episode += 1
             self.iteration = 0
 
-    def get_action(self, state, mode):
+    def get_action(self, state: int, mode: str):
         if mode == "random":
             return np.random.choice(self.actions_n)
         elif mode == "greedy":
@@ -57,9 +58,9 @@ class QLearning:
                 "Episode: {}, Iteration: {}, State: {}, Action: {}, Next state: {}, Reward: {}".format(
                     self.episode,
                     self.iteration,
-                    self.state,
-                    self.action,
-                    self.next_state,
+                    emotions[self.state],
+                    categories[self.action],
+                    emotions[self.next_state],
                     self.reward,
                 )
             )

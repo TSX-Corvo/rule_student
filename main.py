@@ -18,21 +18,22 @@ ENVIRONMENT = "Student-v0"
 
 def train(env: StudentEnv, agent: QLearning, episodes: int):
     for _ in range(episodes):
-        observation, _ = env.reset(seed=7)
+        observation, _ = env.reset()
         terminated, truncated = False, False
         while not (terminated or truncated):
             action = agent.get_action(observation, "random")
             new_observation, reward, terminated, truncated, _ = env.step(action)
             agent.update(observation, action, new_observation, reward, terminated)
             observation = new_observation
+            agent.render(mode="step")
 
 
 def play(env: StudentEnv, agent: QLearning):
-    observation, _ = env.reset(seed=7)
+    observation, _ = env.reset()
     env.render()
     terminated, truncated = False, False
     while not (terminated or truncated):
-        action = agent.get_action(observation, "greedy")
+        action = agent.get_action(observation, "epsilon-greedy")
         new_observation, reward, terminated, truncated, _ = env.step(action)
         agent.update(observation, action, new_observation, reward, terminated)
         observation = new_observation
