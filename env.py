@@ -39,7 +39,7 @@ rules = {
 
 
 class StudentEnv(gym.Env):
-    current_emotion: int
+    metadata = {"render_modes": ["human", None], "render_fps": 1}
 
     def __init__(self):
         # Define action and observation space
@@ -50,14 +50,18 @@ class StudentEnv(gym.Env):
         self.observation_space = spaces.Discrete(len(emotions))
 
         # Define initial state
-        self.current_emotion = np.random.choice(len(emotions))
+        self.current_emotion = self.np_random.choice(len(emotions))
 
-        # Define other parameters as needed
-
-    def reset(self):
-        # Reset the environment to the initial state
-        self.current_emotion = np.random.choice(len(emotions))
+    def _get_obs(self):
         return self.current_emotion
+
+    def reset(self, seed=None, options=None):
+        # Reset the environment to the initial state
+        super().reset(seed=seed, options=options)
+
+        self.current_emotion = self.np_random.choice(len(emotions))
+
+        return self._get_obs(), {}
 
     def step(self, action):
         # Execute one time step within the environment
@@ -69,7 +73,7 @@ class StudentEnv(gym.Env):
         self.current_emotion = emotions.index(next_emotion)
 
         # Return the new state, reward, and other info
-        return self.current_emotion, correct, {}, {}
+        return self._get_obs(), int(correct), True, True, {}
 
     def apply_rules(self, category: str) -> Tuple[bool, str]:
         emotion = emotions[self.current_emotion]
@@ -92,3 +96,9 @@ class StudentEnv(gym.Env):
         else:
             # Default case if there's no specific rule defined
             return random.choice([True, False]), random.choice(emotions)
+
+    def render(self):
+        pass
+
+    def close(self):
+        pass
